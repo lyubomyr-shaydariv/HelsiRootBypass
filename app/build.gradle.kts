@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.neko.helsirootbypass"
+    namespace = "lsh.xposed.jailmonkeybypass"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.neko.helsirootbypass"
+        applicationId = "lsh.xposed.jailmonkeybypass"
         minSdk = 21
         targetSdk = 34
         versionCode = 1

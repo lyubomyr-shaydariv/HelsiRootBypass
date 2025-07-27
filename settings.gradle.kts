@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HelsiRootBypass"
+rootProject.name = "JailMonkeyBypass"
 include(":app")
  
