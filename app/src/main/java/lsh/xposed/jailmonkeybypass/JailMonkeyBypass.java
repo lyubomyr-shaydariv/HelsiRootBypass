@@ -1,40 +1,42 @@
 package lsh.xposed.jailmonkeybypass;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class JailMonkeyBypass implements IXposedHookLoadPackage {
-    @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        XposedHelpers.findAndHookMethod(
-                "com.gantix.JailMonkey.JailMonkeyModule",
-                lpparam.classLoader,
-                "getConstants",
-                new XC_MethodHook() {
-                    @Override
-                    @SuppressWarnings("unchecked")
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        Object originalResult = param.getResult();
-                        HashMap<String, Object> constants = null;
+public final class JailMonkeyBypass
+		implements IXposedHookLoadPackage {
 
-                        if (originalResult instanceof HashMap) {
-                            constants = (HashMap<String, Object>) originalResult;
-                        } else {
-                            constants = new HashMap<>();
-                        }
+	@Override
+	public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) {
+		XposedHelpers.findAndHookMethod(
+				"com.gantix.JailMonkey.JailMonkeyModule",
+				lpparam.classLoader,
+				"getConstants",
+				new XC_MethodHook() {
+					@Override
+					protected void afterHookedMethod(final MethodHookParam param) {
+						final Object originalResult = param.getResult();
+						final Map<String, Object> result;
+						if ( originalResult instanceof Map ) {
+							@SuppressWarnings("unchecked")
+							final Map<String, Object> castResult = (Map<String, Object>) originalResult;
+							result = castResult;
+						} else {
+							result = new HashMap<>();
+						}
+						result.put("isJailBroken", false);
+						result.put("hookDetected", false);
+						result.put("canMockLocation", false);
+						result.put("AdbEnabled", false);
+						param.setResult(result);
+					}
+				}
+		);
+	}
 
-                        constants.put("isJailBroken", false);
-                        constants.put("hookDetected", false);
-                        constants.put("canMockLocation", false);
-                        constants.put("AdbEnabled", false);
-                        param.setResult(constants);
-
-                    }
-                }
-        );
-    }
 }
